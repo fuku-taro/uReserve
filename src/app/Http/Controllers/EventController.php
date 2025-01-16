@@ -13,7 +13,10 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        $events = Event::orderBy('start_date', 'asc')
+        ->paginate(10);
+        // dd($events);
+        return view('manager.events.index',compact('events'));
     }
 
     /**
