@@ -6,12 +6,16 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use Carbon\Carbon;
+use App\Services\EventService;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $eventService;
+    public function __construct(EventService $eventService)
+    {
+        $this->eventService = $eventService;
+    }
+
     public function index()
     {
         $events = Event::orderBy('start_date', 'asc')
@@ -33,13 +37,19 @@ class EventController extends Controller
      */
     public function store(StoreEventRequest $request)
     {
-        // dd($request);
-        $start = $request['event_date'] . " " . $request['start_time'];
-        $startDate = Carbon::createFromFormat('Y-m-d H:i', $start);
+        $check = $this->eventService->checkEventDuplication(
+            $request['event_date'],
+            $request['start_time'],
+            $request['end_time']
+        );
+        if($check){
+            session()->flash('status', 'この時間は既に他の予約が存在します。');
+            return redirect()->back()->withInput();
+        }
 
-        $end = $request['event_date'] . " " . $request['end_time'];
-        $endDate = Carbon::createFromFormat('Y-m-d H:i', $end);
-
+        $startDate = $this->eventService->joinDateAndTime($request['event_date'], $request['start_time']);
+        $endDate = $this->eventService->joinDateAndTime($request['event_date'], $request['end_time']);
+        
         Event::create([
             'name' => $request['event_name'],
             'information' => $request['information'],
