@@ -7,7 +7,12 @@ COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
 # # パッケージのインストール
 RUN apt-get update \
   && apt-get -y install git zip unzip vim \
-  wget xz-utils
+  wget xz-utils \
+  libfreetype-dev \
+  libjpeg62-turbo-dev \
+  libpng-dev \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-install -j$(nproc) gd
 
 RUN docker-php-ext-install pdo_mysql mysqli
 
