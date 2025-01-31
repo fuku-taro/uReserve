@@ -28,7 +28,7 @@
 
                         <div class="mt-4">
                             <x-label for="information" value="イベント詳細" />
-                            <x-textarea row="3" id="information" name="information" class="block mt-1 w-full">{{ $event->information }}</x-textarea>
+                            <x-textarea row="3" id="information" name="information" class="block mt-1 w-full field-sizing-content">{{ $event->information }}</x-textarea>
                         </div>
 
                         <div class="md:flex justify-between">

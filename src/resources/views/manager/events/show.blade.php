@@ -59,9 +59,11 @@
                                     非表示
                                 @endif
                             </div>
-                            <x-button class="ms-4">
-                                編集する
-                            </x-button>
+                            @if($event->eventDate >= \Carbon\Carbon::today()->format('Y年m月d日') )
+                                <x-button class="ms-4">
+                                    編集する
+                                </x-button>
+                            @endif
                         </div>
                     </form>
                 </div> 
