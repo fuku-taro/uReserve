@@ -111,9 +111,16 @@ class EventController extends Controller
         return to_route('events.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function past()
+    {
+        $today = Carbon::today();
+        $events = Event::whereDate('start_date', '<', $today)
+            ->orderBy('start_date', 'desc')
+            ->paginate(10);
+
+        return view('manager.events.past', compact('events'));
+    }
+
     public function destroy(Event $event)
     {
         //
