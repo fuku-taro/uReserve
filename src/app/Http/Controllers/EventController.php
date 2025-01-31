@@ -32,9 +32,6 @@ class EventController extends Controller
         return view('manager.events.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreEventRequest $request)
     {
         $check = $this->eventService->checkEventDuplication(
@@ -71,24 +68,47 @@ class EventController extends Controller
         $startTime = $event->startTime;
         $endTime = $event->endTime;
 
-        // dd($event, $eventDate, $startTime, $endTime);
         return view('manager.events.show', compact('event', 'eventDate', 'startTime', 'endTime'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Event $event)
     {
-        //
+        $event = Event::findOrFail($event->id);
+        $eventDate = $event->editEventDate;
+        $startTime = $event->startTime;
+        $endTime = $event->endTime;
+        // dd($event->is_visible);
+        return view('manager.events.edit', compact('event', 'eventDate', 'startTime', 'endTime'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        $count = $this->eventService->countEventDuplication(
+            $request['event_date'],
+            $request['start_time'],
+            $request['end_time']
+        );
+        // dd($count);
+        if($count > 1){
+            session()->flash('status', 'この時間は既に他の予約が存在します。');
+            return back()->withInput();
+        }
+
+        $startDate = $this->eventService->joinDateAndTime($request['event_date'], $request['start_time']);
+        $endDate = $this->eventService->joinDateAndTime($request['event_date'], $request['end_time']);
+        
+        $event = Event::findOrFail($event->id);
+        $event->name = $request['event_name'];
+        $event->information = $request['information'];
+        $event->start_date = $startDate;
+        $event->end_date = $endDate;
+        $event->max_people = $request['max_people'];
+        $event->is_visible = $request['is_visible'];
+        $event->save();
+
+        session()->flash('status', '更新が完了しました。');
+
+        return to_route('events.index');
     }
 
     /**

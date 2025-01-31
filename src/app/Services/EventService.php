@@ -17,6 +17,16 @@ class EventService
     return $isCheck;
   }
 
+  public function countEventDuplication($eventDate, $startTime, $endTime)
+  {
+    $count = Event::whereDate('start_date', $eventDate)
+            ->whereTime('end_date', '>', $startTime)
+            ->whereTime('start_date', '<', $endTime)
+            ->count();
+
+    return $count;
+  }
+
   public function joinDateAndTime($date, $time)
   {
     $join = $date . " " . $time;
