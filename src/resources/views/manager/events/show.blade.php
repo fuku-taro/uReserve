@@ -70,11 +70,11 @@
             </div>
         </div>
     </div>
+    @if (!$users->isEmpty())
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="py-4 max-w-2xl mx-auto">
-                    @if (!$users->isEmpty())
                         <div class="text-center py-4">予約状況</div>
                         <table class="table-auto w-full text-left whitespace-no-wrap">
                             <thead>
@@ -94,9 +94,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    @endif
-                </div> 
+                    </div> 
+                </div>
             </div>
         </div>
-    </div>
+        @endif
 </x-app-layout>
