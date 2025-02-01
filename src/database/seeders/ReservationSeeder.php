@@ -25,5 +25,11 @@ class ReservationSeeder extends Seeder
                 'event_id' => 2,
                 'number_of_people' => 2,
         ]);
+        Reservation::create([
+                'user_id' => 2,
+                'event_id' => 2,
+                'number_of_people' => 2,
+                'canceled_date' => '2025-02-01 00:00:00',
+        ]);
 }
 }
