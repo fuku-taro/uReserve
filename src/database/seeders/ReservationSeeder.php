@@ -8,11 +8,8 @@ use App\Models\Reservation;
 
 class ReservationSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
+        public function run(): void
+        {
         Reservation::create([
                 'user_id' => 1,
                 'event_id' => 1,
@@ -28,5 +25,5 @@ class ReservationSeeder extends Seeder
                 'event_id' => 2,
                 'number_of_people' => 2,
         ]);
-    }
+}
 }

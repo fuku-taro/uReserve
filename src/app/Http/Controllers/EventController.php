@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use Carbon\Carbon;
 use App\Services\EventService;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -20,7 +21,15 @@ class EventController extends Controller
     {
         $today = Carbon::today();
 
-        $events = Event::whereDate('start_date', '>=', $today)
+        $reservedPeople = DB::table('reservations')
+        ->select('event_id', DB::raw('sum(number_of_people) as number_of_people'))
+        ->groupBy('event_id');
+        
+        $events = DB::table('events')
+        ->leftJoinSub($reservedPeople, 'reservedPeople', function($join){
+            $join->on('events.id', '=', 'reservedPeople.event_id');
+        })
+        ->whereDate('start_date', '>=', $today)
         ->orderBy('start_date', 'asc')
         ->paginate(10);
 
@@ -123,9 +132,18 @@ class EventController extends Controller
     public function past()
     {
         $today = Carbon::today();
-        $events = Event::whereDate('start_date', '<', $today)
-            ->orderBy('start_date', 'desc')
-            ->paginate(10);
+
+        $reservedPeople = DB::table('reservations')
+        ->select('event_id', DB::raw('sum(number_of_people) as number_of_people'))
+        ->groupBy('event_id');
+
+        $events = DB::table('events')
+        ->leftJoinSub($reservedPeople, 'reservedPeople', function($join){
+            $join->on('events.id', '=', 'reservedPeople.event_id');
+        })
+        ->whereDate('start_date', '<', $today)
+        ->orderBy('start_date', 'desc')
+        ->paginate(10);
 
         return view('manager.events.past', compact('events'));
     }
